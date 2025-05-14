@@ -1,3 +1,4 @@
+
 <?php
 // Library Homepage with Blue Color Palette
 ?>
@@ -6,7 +7,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System</title>
+    <meta name="description" content="Modern Library Portal – Explore collections, borrow digital content, and join community events.">
+    <meta name="keywords" content="library, books, e-books, research, community events">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <title>Modern Library Portal</title>
     <style>
         /* Blue color palette */
         :root {
@@ -39,57 +44,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-        }
-
-        /* Header styles */
-        header {
-            background-color: var(--primary);
-            padding: 20px 0;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo h1 {
-            color: var(--white);
-            font-size: 24px;
-            margin-left: 10px;
-        }
-
-        .logo-icon {
-            font-size: 28px;
-            color: var(--white);
-        }
-
-        /* Navigation */
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-
-        nav ul li {
-            margin-left: 20px;
-        }
-
-        nav ul li a {
-            color: var(--white);
-            text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        nav ul li a:hover {
-            background-color: var(--primary-light);
         }
 
         /* Hero section */
@@ -268,76 +222,8 @@
             background-color: var(--primary-light);
         }
 
-        /* Footer */
-        footer {
-            background-color: var(--primary-dark);
-            color: var(--white);
-            padding: 40px 0 20px;
-        }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
 
-        .footer-column h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--primary-light);
-            padding-bottom: 10px;
-            display: inline-block;
-        }
-
-        .footer-column ul {
-            list-style: none;
-        }
-
-        .footer-column ul li {
-            margin-bottom: 10px;
-        }
-
-        .footer-column ul li a {
-            color: var(--light-blue);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-column ul li a:hover {
-            color: var(--white);
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
-            color: var(--gray);
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-            }
-
-            nav ul {
-                margin-top: 20px;
-            }
-
-            nav ul li {
-                margin: 0 10px;
-            }
-
-            .hero-content h2 {
-                font-size: 32px;
-            }
-
-            .features-grid, .collections-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
@@ -370,37 +256,21 @@
     $currentYear = date("Y");
     ?>
 
-    <!-- Header -->
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <span class="logo-icon">📚</span>
-                <h1>Library Management System</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Catalog</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Events</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
+    <?php
+    include('header.php');
+    ?>
     <!-- Hero Section -->
     <section class="hero">
         <img src="images/3.png" alt="Library Interior" class="hero-image">
-        <div class="overlay"></div>
+    <div class="overlay"></div>
         <div class="hero-content">
             <h2>Welcome to Your Community Library</h2>
             <p>Discover thousands of books, resources, and digital content to expand your knowledge and imagination.</p>
-            <div class="search-bar">
-                <input type="text" placeholder="Search for books, authors, or topics...">
+            <form class="search-bar" method="GET" action="search.php">
+                <input type="text" name="query" placeholder="Search for books, authors, or topics...">
                 <button type="submit">Search</button>
-            </div>
+            </form>
+
         </div>
     </section>
 
@@ -446,52 +316,8 @@
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Hours & Location</h3>
-                    <ul>
-                        <li>Monday - Friday: 9:00 AM - 8:00 PM</li>
-                        <li>Saturday: 10:00 AM - 6:00 PM</li>
-                        <li>Sunday: 12:00 PM - 5:00 PM</li>
-                        <li>123 Library Street, Booktown</li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Resources</h3>
-                    <ul>
-                        <li><a href="#">Online Catalog</a></li>
-                        <li><a href="#">Research Databases</a></li>
-                        <li><a href="#">Interlibrary Loan</a></li>
-                        <li><a href="#">Digital Archives</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Support</h3>
-                    <ul>
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Library Card Application</a></li>
-                        <li><a href="#">Donate</a></li>
-                        <li><a href="#">Volunteer</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Connect</h3>
-                    <ul>
-                        <li><a href="#">Newsletter</a></li>
-                        <li><a href="#">Facebook</a></li>
-                        <li><a href="#">Twitter</a></li>
-                        <li><a href="#">Instagram</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                &copy; <?php echo $currentYear; ?> Modern Library Portal. All rights reserved.
-            </div>
-        </div>
-    </footer>
+    <?php
+    include('footer.php');
+    ?>
 </body>
 </html>
