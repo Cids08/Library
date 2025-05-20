@@ -483,44 +483,67 @@
                 <div class="mobile-sidebar">
                     <div class="mobile-sidebar-header">
                         <h1>Library Admin</h1>
-                        <button class="close-button" id="close-sidebar"><i class="fas fa-times"></i></button>
+                        <button class="close-button" id="close-sidebar">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <?php include 'sidebar.html'; ?>
-                </div>
-            </div>
+                    <div class="sidebar-content">
+                        <nav class="sidebar-nav">
+                            <div class="sidebar-section">
+                                <p class="sidebar-section-title">Main</p>
+                                <a href="AdminDashboard.php" class="sidebar-link">
+                                    <i class="fas fa-home"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                                <a href="books.php" class="sidebar-link">
+                                    <i class="fas fa-book"></i>
+                                    <span>Books</span>
+                                </a>
+                                <a href="members.php" class="sidebar-link">
+                                    <i class="fas fa-users"></i>
+                                    <span>Members</span>
+                                </a>
+                            </div>
+                            <div class="sidebar-section">
+                                <p class="sidebar-section-title">Transactions</p>
+                                <a href="borrowed.php" class="sidebar-link">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <span>Borrowed</span>
+                                </a>
+                                <a href="overdue.php" class="sidebar-link">
+                                    <i class="fas fa-clock"></i>
+                                    <span>Overdue</span>
+                                </a>
+                                <a href="history.php" class="sidebar-link">
+                                    <i class="fas fa-history"></i>
+                                    <span>History</span>
+                                </a>
+                            </div>
+                            <div class="sidebar-section">
+                                <p class="sidebar-section-title">System</p>
+                                <a href="reports.php" class="sidebar-link">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Reports</span>
+                                </a>
+                                <a href="settings.php" class="sidebar-link">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Settings</span>
+                                </a>
+                            </div>
+                        </nav>
 
-            <!-- Main Content -->
-            <main class="dashboard">
-                <div class="page-actions">
-                    <button id="add-member-btn" class="btn btn-primary"><i class="fas fa-plus"></i> Add Member</button>
-                    <input type="text" id="search-member" placeholder="Search members..." class="search-input" />
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Member Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Membership Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="members-table-body"></tbody>
-                    </table>
-                    <div class="table-footer">
-                        <div class="table-info" id="table-info">Showing 1 to 10 of 50 entries</div>
-                        <div class="pagination">
-                            <button class="pagination-button" id="prev-page">Previous</button>
-                            <button class="pagination-button active">1</button>
-                            <button class="pagination-button">2</button>
-                            <button class="pagination-button">3</button>
-                            <button class="pagination-button" id="next-page">Next</button>
+                    </div>
+                    <div class="sidebar-footer">
+                        <div class="profile">
+                            <img class="profile-image" src="/api/placeholder/40/40" alt="Admin profile picture">
+                            <div class="profile-info">
+                                <p class="profile-name">John Doe</p>
+                                <p class="profile-role">Admin</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
 
             <!-- Improved Modal -->
             <div id="member-modal" class="modal">
