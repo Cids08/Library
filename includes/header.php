@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-        <!-- Header -->
+    <!-- Header -->
     <header>
         <div class="container header-content">
             <div class="logo">
@@ -22,10 +22,10 @@
                     <li><a href="events.php">Events</a></li>
                     <li><a href="about.php">About</a></li>
                     <li><a href="contact.php">Contact</a></li>
+                    <li><a href="auth.php" class="auth-link">Sign In | Sign Up</a></li>
                 </ul>
-           </nav>
+            </nav>
         </div>
     </header>
-
 </body>
 </html>

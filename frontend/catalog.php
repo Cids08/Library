@@ -1,4 +1,55 @@
 <?php
+session_start();
+
+try {
+    $pdo = new PDO("mysql:host=localhost;dbname=libmas", "root", "");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Get filter and pagination values
+    $subject_filter = $_GET['subject'] ?? '';
+    $page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
+    $limit = 8; // Books per page
+    $offset = ($page - 1) * $limit;
+
+    // Count total filtered books
+    $count_query = "SELECT COUNT(*) FROM books WHERE available = 1";
+    if (!empty($subject_filter)) {
+        $count_query .= " AND subject = ?";
+    }
+    $stmt = $pdo->prepare($count_query);
+    if (!empty($subject_filter)) {
+        $stmt->execute([$subject_filter]);
+    } else {
+        $stmt->execute();
+    }
+    $total_books = $stmt->fetchColumn();
+    $total_pages = ceil($total_books / $limit);
+
+    // Fetch books with optional subject filter
+    $query = "SELECT * FROM books WHERE available = 1";
+    if (!empty($subject_filter)) {
+        $query .= " AND subject = ?";
+    }
+    $query .= " ORDER BY title ASC LIMIT ? OFFSET ?";
+    
+    $stmt = $pdo->prepare($query);
+    if (!empty($subject_filter)) {
+        $stmt->bindValue(1, $subject_filter);
+        $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+        $stmt->bindValue(3, $offset, PDO::PARAM_INT);
+    } else {
+        $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+        $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+    }
+    $stmt->execute();
+    $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    die("Database error: " . $e->getMessage());
+}
+?>
+
+<?php
 $currentYear = date("Y");
 ?>
 <!DOCTYPE html>
@@ -6,139 +57,170 @@ $currentYear = date("Y");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Browse the full catalog of the Modern Library Portal.">
-    <meta name="keywords" content="library catalog, books, e-books, reading, borrow">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="..public/css/footer.css" />  
     <title>Library Catalog | Modern Library Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
+    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="../public/css/header.css">
+    <link rel="stylesheet" href="../public/css/footer.css">
     <style>
-        :root {
-            --primary-dark: #1a3a5f;
-            --primary: #2c5282;
-            --primary-light: #4299e1;
-            --accent: #63b3ed;
-            --light-blue: #bee3f8;
-            --very-light-blue: #ebf8ff;
-            --white: #ffffff;
-            --gray: #e2e8f0;
-            --dark-gray: #4a5568;
+        /* Your existing styles here */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        .filter-button {
+            padding: 8px 16px;
+            background-color: #f3f4f6;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        body {
-            background-color: var(--very-light-blue);
-            color: var(--primary-dark);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section-title {
-            text-align: center;
-            margin: 50px 0 20px;
-            font-size: 32px;
-            color: var(--primary-dark);
+        .filter-button.active {
+            background-color: #2c5282;
+            color: white;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
         }
 
         .feature-card {
-            background-color: var(--white);
+            background-color: white;
             border-radius: 8px;
-            padding: 25px;
+            padding: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         .feature-image {
-            width: 80px;
-            height: 120px;
+            width: 100%;
+            height: 180px;
             object-fit: cover;
-            margin-bottom: 15px;
-            background-color: #e2e8f0;
             border-radius: 8px;
-        }
-
-        .feature-card h3 {
             margin-bottom: 10px;
-            color: var(--primary-dark);
         }
 
-        .feature-card p {
-            color: var(--dark-gray);
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
         }
 
-        .search-bar {
-            text-align: center;
-            margin: 30px 0 60px;
-        }
-
-        .search-bar input {
-            padding: 14px;
-            width: 70%;
-            max-width: 500px;
+        .pagination a,
+        .pagination span {
+            padding: 8px 14px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #2c5282;
+        }
+
+        .pagination .active {
+            background-color: #2c5282;
+            color: white;
+            border-color: #2c5282;
+        }
+
+        .pagination-disabled {
+            color: #ccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
 
-    <?php include('../includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
+
 <!-- Catalog Section -->
 <section class="container">
     <h2 class="section-title">Library Catalog</h2>
+
+    <!-- Subject Filters -->
+    <div class="filters">
+        <a href="<?= $_SERVER['PHP_SELF'] ?>" class="filter-button <?= empty($subject_filter) ? 'active' : '' ?>">All</a>
+        <?php
+        // Get all available subjects from database
+        $subjects = $pdo->query("SELECT DISTINCT subject FROM books ORDER BY subject")->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($subjects as $subject):
+            $active = ($subject === $subject_filter) ? 'active' : '';
+            echo "<a href='{$_SERVER['PHP_SELF']}?subject=" . urlencode($subject) . "' class='filter-button $active'>$subject</a>";
+        endforeach;
+        ?>
+    </div>
+
+    <!-- Search Bar -->
     <div class="search-bar">
-        <input type="text" placeholder="Search books, authors, topics...">
+        <input type="text" placeholder="Search books, authors, topics..." id="bookSearchInput">
     </div>
-    <div class="features-grid">
-        <div class="feature-card">
-            <img src="../public/images/sample.jpg" alt="The Great Gatsby" class="feature-image">
-            <h3>The Great Gatsby</h3>
-            <p>Classic American novel by F. Scott Fitzgerald set in the Jazz Age.</p>
-        </div>
-        <div class="feature-card">
-            <img src="images/sample.jpg" alt="The Great Gatsby" class="feature-image">
-            <h3>Atomic Habits</h3>
-            <p>James Clear's guide to building good habits and breaking bad ones.</p>
-        </div>
-        <div class="feature-card">
-            <img src="../public/images/sample.jpg" alt="The Great Gatsby" class="feature-image">
-            <h3>1984</h3>
-            <p>George Orwell's dystopian tale of surveillance and government control.</p>
-        </div>
-        <div class="feature-card">
-            <img src="../public/images/sample.jpg" alt="The Great Gatsby" class="feature-image">
-            <h3>Educated</h3>
-            <p>A memoir by Tara Westover about learning, family, and resilience.</p>
-        </div>
+
+    <!-- Book Grid -->
+    <div class="features-grid" id="bookGrid">
+        <?php if ($books): ?>
+            <?php foreach ($books as $book): ?>
+                <div class="feature-card">
+                    <img src="<?= htmlspecialchars($book['cover_image'] ?: '../public/images/default.jpg') ?>" alt="<?= htmlspecialchars($book['title']) ?>" class="feature-image">
+                    <h3><?= htmlspecialchars($book['title']) ?></h3>
+                    <p><?= htmlspecialchars($book['author']) ?></p>
+                    <small style="color:#6b7280"><?= htmlspecialchars($book['subject']) ?></small>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No books found.</p>
+        <?php endif; ?>
     </div>
+
+    <!-- Pagination -->
+    <?php if ($total_pages > 1): ?>
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a href="<?= $_SERVER['PHP_SELF'] ?>?subject=<?= urlencode($subject_filter) ?>&page=<?= $page - 1 ?>">
+                    ← Previous
+                </a>
+            <?php else: ?>
+                <span class="pagination-disabled">← Previous</span>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="<?= $_SERVER['PHP_SELF'] ?>?subject=<?= urlencode($subject_filter) ?>&page=<?= $i ?>"
+                   class="<?= $i == $page ? 'active' : '' ?>">
+                    <?= $i ?>
+                </a>
+            <?php endfor; ?>
+
+            <?php if ($page < $total_pages): ?>
+                <a href="<?= $_SERVER['PHP_SELF'] ?>?subject=<?= urlencode($subject_filter) ?>&page=<?= $page + 1 ?>">
+                    Next →
+                </a>
+            <?php else: ?>
+                <span class="pagination-disabled">Next →</span>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
 </section>
- <?php
-    include('../includes/footer.php');
- ?>
+
+<?php include('../includes/footer.php'); ?>
+
+<script>
+    // Optional: Add client-side search filtering
+    const bookCards = document.querySelectorAll('.feature-card');
+    const searchInput = document.getElementById('bookSearchInput');
+
+    searchInput.addEventListener('input', function () {
+        const query = this.value.toLowerCase();
+        bookCards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(query) ? 'block' : 'none';
+        });
+    });
+</script>
 
 </body>
 </html>
