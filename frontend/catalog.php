@@ -9,6 +9,7 @@ $currentYear = date("Y");
     <meta name="description" content="Browse the full catalog of the Modern Library Portal.">
     <meta name="keywords" content="library catalog, books, e-books, reading, borrow">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="..public/css/footer.css" />  
     <title>Library Catalog | Modern Library Portal</title>
     <style>
         :root {
@@ -105,9 +106,7 @@ $currentYear = date("Y");
 </head>
 <body>
 
-    <?php
-     include('header.php');
-    ?>
+    <?php include('../includes/header.php'); ?>
 <!-- Catalog Section -->
 <section class="container">
     <h2 class="section-title">Library Catalog</h2>
@@ -116,7 +115,7 @@ $currentYear = date("Y");
     </div>
     <div class="features-grid">
         <div class="feature-card">
-            <img src="images/sample.jpg" alt="The Great Gatsby" class="feature-image">
+            <img src="../public/images/sample.jpg" alt="The Great Gatsby" class="feature-image">
             <h3>The Great Gatsby</h3>
             <p>Classic American novel by F. Scott Fitzgerald set in the Jazz Age.</p>
         </div>
@@ -126,19 +125,19 @@ $currentYear = date("Y");
             <p>James Clear's guide to building good habits and breaking bad ones.</p>
         </div>
         <div class="feature-card">
-            <img src="images/sample.jpg" alt="The Great Gatsby" class="feature-image">
+            <img src="../public/images/sample.jpg" alt="The Great Gatsby" class="feature-image">
             <h3>1984</h3>
             <p>George Orwell's dystopian tale of surveillance and government control.</p>
         </div>
         <div class="feature-card">
-            <img src="images/sample.jpg" alt="The Great Gatsby" class="feature-image">
+            <img src="../public/images/sample.jpg" alt="The Great Gatsby" class="feature-image">
             <h3>Educated</h3>
             <p>A memoir by Tara Westover about learning, family, and resilience.</p>
         </div>
     </div>
 </section>
  <?php
-    include('footer.php');
+    include('../includes/footer.php');
  ?>
 
 </body>
