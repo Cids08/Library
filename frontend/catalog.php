@@ -49,9 +49,7 @@ try {
 }
 ?>
 
-<?php
-$currentYear = date("Y");
-?>
+<?php $currentYear = date("Y"); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +61,7 @@ $currentYear = date("Y");
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/footer.css">
     <style>
-        /* Your existing styles here */
+        /* Your existing styles */
         .filters {
             display: flex;
             flex-wrap: wrap;
@@ -97,6 +95,11 @@ $currentYear = date("Y");
             padding: 15px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
         }
 
         .feature-image {
@@ -133,6 +136,21 @@ $currentYear = date("Y");
             color: #ccc;
             cursor: not-allowed;
         }
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -165,8 +183,12 @@ $currentYear = date("Y");
     <div class="features-grid" id="bookGrid">
         <?php if ($books): ?>
             <?php foreach ($books as $book): ?>
-                <div class="feature-card">
-                    <img src="<?= htmlspecialchars($book['cover_image'] ?: '../public/images/default.jpg') ?>" alt="<?= htmlspecialchars($book['title']) ?>" class="feature-image">
+                <div class="feature-card" data-title="<?= htmlspecialchars(strtolower($book['title'])) ?>"
+                                         data-author="<?= htmlspecialchars(strtolower($book['author'])) ?>"
+                                         data-subject="<?= htmlspecialchars(strtolower($book['subject'])) ?>">
+                    <img src="<?= htmlspecialchars($book['cover_image'] ?: '../public/images/default.jpg') ?>"
+                         alt="<?= htmlspecialchars($book['title']) ?>"
+                         class="feature-image">
                     <h3><?= htmlspecialchars($book['title']) ?></h3>
                     <p><?= htmlspecialchars($book['author']) ?></p>
                     <small style="color:#6b7280"><?= htmlspecialchars($book['subject']) ?></small>
@@ -209,17 +231,30 @@ $currentYear = date("Y");
 <?php include('../includes/footer.php'); ?>
 
 <script>
-    // Optional: Add client-side search filtering
-    const bookCards = document.querySelectorAll('.feature-card');
+    const cards = document.querySelectorAll('.feature-card');
     const searchInput = document.getElementById('bookSearchInput');
 
-    searchInput.addEventListener('input', function () {
-        const query = this.value.toLowerCase();
-        bookCards.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            card.style.display = text.includes(query) ? 'block' : 'none';
+    function filterBooks() {
+        const query = searchInput.value.trim().toLowerCase();
+
+        cards.forEach(card => {
+            const title = card.getAttribute('data-title');
+            const author = card.getAttribute('data-author');
+            const subject = card.getAttribute('data-subject');
+
+            if (
+                title.includes(query) ||
+                author.includes(query) ||
+                subject.includes(query)
+            ) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
         });
-    });
+    }
+
+    searchInput.addEventListener('input', filterBooks);
 </script>
 
 </body>
