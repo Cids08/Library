@@ -1,0 +1,103 @@
+<?php
+session_start(); 
+try {
+    $pdo = new PDO("mysql:host=localhost;dbname=libmas", "root", "");
+    $stmt = $pdo->query("SELECT * FROM books WHERE available = 1 ORDER BY title ASC");
+    $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Database error: " . $e->getMessage());
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Catalog</title>
+    <style>
+        /* Your existing styles here */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            background-color: #f3f4f6;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-button.active {
+            background-color: #2c5282;
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .feature-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .pagination a, .pagination span {
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #2c5282;
+        }
+
+        .pagination .active {
+            background-color: #2c5282;
+            color: white;
+            border-color: #2c5282;
+        }
+
+        .pagination-disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <section class="container">
+        <h2 class="section-title">Library Catalog</h2>
+        <div class="features-grid">
+            <?php foreach ($books as $book): ?>
+                <div class="feature-card">
+                    <img src="<?= htmlspecialchars($book['cover_image'] ?? '/public/images/book-placeholder.png') ?>" alt="<?= htmlspecialchars($book['title']) ?>">
+                    <h3><?= htmlspecialchars($book['title']) ?></h3>
+                    <p><?= htmlspecialchars($book['author']) ?> - <?= htmlspecialchars($book['category']) ?></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </section>
+</body>
+</html>
